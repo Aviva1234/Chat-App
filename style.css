@@ -1,0 +1,18 @@
+body{
+      font-family: "Smooch Sans", serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 1.5rem;
+    }
+
+h1{
+  font-family: "Smooch Sans", serif;
+  font-optical-sizing: auto;
+  font-weight: 516;
+  font-style: normal;
+}
+#loginDiv{
+    display: flex;
+    justify-content: center;
+}
