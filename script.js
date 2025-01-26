@@ -33,13 +33,36 @@ window.onload = function () {
       loginBtn.innerHTML = "Log In";
       loginDiv.append(loginBtn);
       document.body.append(loginDiv);
+      var loginError = document.createElement("p");
+      loginError.setAttribute("id", "loginError");
+      loginDiv.append(loginError);
+      //error = document.getElementById("")
       loginName.onkeyup = function () {
         if (loginName.value.length > 0) {
           loginBtn.classList.add("enabled");
+          console.log(loginName.value.length);
         } else {
+          console.log(loginName.value.length);
           loginBtn.classList.remove("enabled");
+          console.log(loginError.innerHTML);
         }
+        loginBtn.addEventListener("click", checkForError());
       };
+
+      function checkForError() {
+        if (loginName.value.length > 0) {
+          loginError.innerHTML = "";
+          //document.getElementById("loginError").innerHTML = "";
+          // loginError.remove();
+        } else if (loginName.value.length === 0) {
+          //loginError = document.createElement("p");
+          //document.getElementById("loginError").innerHTML =
+          loginError.innerHTML = "Please enter a name.";
+          //loginError.setAttribute("id", "loginError");
+          //loginDiv.append(loginError);
+        }
+      }
+      //loginBtn.addEventListener("click", checkForError());
     }
   }
   var App = new Chat();

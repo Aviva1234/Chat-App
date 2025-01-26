@@ -16,3 +16,6 @@ h1{
     display: flex;
     justify-content: center;
 }
+#loginError{
+    color: #ed4b42;
+}
