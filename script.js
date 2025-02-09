@@ -66,6 +66,7 @@ window.onload = function () {
 
       var chat_input_send = document.createElement("button");
       chat_input_send.setAttribute("id", "chat_input_send");
+      chat_input_send.setAttribute("class", "btn btn-info");
 
       chat_input_send.setAttribute("disabled", true);
       chat_input_send.innerHTML = `<p class="">SEND</p>`;
@@ -87,12 +88,12 @@ window.onload = function () {
               return;
             }
             parent.createLoader("chat_content_container");
-            parent.send_message(chat_input.value);
+            parent.sendMessage(chat_input.value);
             chat_input.value = 0;
             chat_input.focus();
           };
         } else {
-          chat_input.send.classList.remove("enabled");
+          chat_input_send.classList.remove("enabled");
         }
       };
       var chat_logout_container = document.createElement("div");
@@ -114,11 +115,13 @@ window.onload = function () {
       );
       chat_container.append(chat_inner_container);
       document.body.append(chat_container);
-      parent.createLoader("chat_content_contaier");
+      parent.createLoader("chat_content_container");
+      parent.refreshChat();
     }
     save_name(name) {
       localStorage.setItem("name", name);
     }
+
     get_name() {
       if (localStorage.getItem("name") != null) {
         return localStorage.getItem("name");
@@ -126,6 +129,97 @@ window.onload = function () {
         this.home();
         return null;
       }
+    }
+    sendMessage(message) {
+      parent = this;
+      if (parent.get_name() == null && message == null) {
+        return;
+      }
+      db.ref("chats/").once("value", function (msg) {
+        var index = parseFloat(msg.numChildren()) + 1;
+        db.ref("chats/" + `message_${index}`)
+          .set({
+            name: parent.get_name(),
+            message: message,
+            index: index,
+          })
+          .then(function () {
+            parent.refreshChat();
+          });
+      });
+    }
+    refreshChat() {
+      var chat_content_container = document.getElementById(
+        "chat_content_container"
+      );
+      db.ref("chats/").on("value", function (msg) {
+        chat_content_container.innerHTML = "";
+        if (msg.numChildren() == 0) {
+          return;
+        }
+        var messages = Object.values(msg.val());
+        var guide = [];
+        var unordered = [];
+        var ordered = [];
+        for (var i = 0; i < messages.length; i++) {
+          guide.push(i + 1);
+          unordered.push([messages[i], messages[i].index]);
+        }
+        guide.forEach(function (key) {
+          var found = false;
+          unordered = unordered.filter(function (item) {
+            if (!found && item[1] == key) {
+              ordered.push(item[0]);
+              found = true;
+              return false;
+            } else {
+              return true;
+            }
+          });
+        });
+        ordered.forEach(function (data) {
+          var name = data.name;
+          var message = data.message;
+          var message_container = document.createElement("div");
+          message_container.setAttribute("class", "message_container");
+
+          var message_inner_container = document.createElement("div");
+          message_inner_container.setAttribute(
+            "class",
+            "message_inner_container"
+          );
+
+          var message_user_container = document.createElement("div");
+          message_user_container.setAttribute(
+            "class",
+            "message_user_container"
+          );
+          var message_user = document.createElement("p");
+          message_user.setAttribute("class", "message_user");
+          message_user.textContent = `${name}`;
+
+          var message_content_container = document.createElement("div");
+          message_content_container.setAttribute(
+            "class",
+            "message_content_container"
+          );
+
+          var message_content = document.createElement("p");
+          message_content.setAttribute("class", "message_content");
+          message_content.textContent = `${message}`;
+
+          message_user_container.append(message_user);
+          message_content_container.append(message_content);
+          message_inner_container.append(
+            message_user_container,
+            message_content_container
+          );
+          message_container.append(message_inner_container);
+
+          chat_content_container.append(message_container);
+        });
+        chat_content_container.scrollTop = chat_content_container.scrollHeight;
+      });
     }
     createLoginPage() {
       var parent = this;

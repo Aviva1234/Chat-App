@@ -38,3 +38,14 @@ float: left;
 padding-left: 15px;
 padding-right: 15px;
 }
+.message_container{
+  border-bottom: 2px skyblue solid;
+}
+.message_user{
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+#chat_input_send{
+padding:0px;
+margin-bottom:0px;
+}
