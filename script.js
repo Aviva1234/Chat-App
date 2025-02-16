@@ -46,6 +46,7 @@ window.onload = function () {
       loaderContainer.append(loader);
       container.append(loaderContainer);
     }
+
     createChat() {
       var parent = this;
       var titleContainer = document.getElementById("titleDiv");
@@ -70,6 +71,14 @@ window.onload = function () {
 
       chat_input_send.setAttribute("disabled", true);
       chat_input_send.innerHTML = `<p class="">SEND</p>`;
+
+      var history_delete = document.createElement("button");
+      history_delete.setAttribute("class", "history_delete");
+      history_delete.onclick = function () {
+        db.ref("chats/").remove();
+      };
+      history_delete.innerHTML = "Delete";
+      chat_input_container.append(history_delete);
 
       var chat_input = document.createElement("input");
       chat_input.setAttribute("id", "chat_input");
@@ -148,6 +157,7 @@ window.onload = function () {
           });
       });
     }
+
     refreshChat() {
       var chat_content_container = document.getElementById(
         "chat_content_container"
@@ -177,6 +187,7 @@ window.onload = function () {
             }
           });
         });
+
         ordered.forEach(function (data) {
           var name = data.name;
           var message = data.message;
@@ -218,9 +229,11 @@ window.onload = function () {
 
           chat_content_container.append(message_container);
         });
+
         chat_content_container.scrollTop = chat_content_container.scrollHeight;
       });
     }
+
     createLoginPage() {
       var parent = this;
       var loginDiv = document.createElement("div");
